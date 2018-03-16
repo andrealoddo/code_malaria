@@ -2,12 +2,10 @@
 
 I = imread('1401063467-0001-schizonte.tif');
 orI = I;
-channel = 2;
+%imshow(I);
 
-orHSV = rgb2you(I, 'HSV');
-I = orHSV(:,:,channel);
-
-
+HSV = rgb2hsv(I);
+I = HSV(:,:,2);
 
 % In this image the background illumination changes gradually 
 % from the top-left corner to the bottom-right corner of the image. 
@@ -25,7 +23,7 @@ N = 2*size(I,2) + 1;
 % to speed-up the FFT computation, but we will skip that step 
 % for the sake of simplicity. Next, we choose a standard deviation for the 
 % Gaussian which determines the bandwidth of low-frequency band that will be filtered out.
-sigma = 100;
+sigma = 10;
 
 % And create the high-pass filter...
 [X, Y] = meshgrid(1:N,1:M);
@@ -48,17 +46,15 @@ Iout = Iout(1:size(I,1),1:size(I,2));
 
 Ihmf = exp(Iout) - 1;
 
-%figure(2), imshowpair(imresize(orHSV(:,:,2), 0.25), imresize(Ihmf, 0.25), 'diff');
-
-doubleHSV = im2double(orHSV);
-doubleHSV(:,:,channel) = Ihmf;
+%imshowpair(imresize(I, 0.25), imresize(Ihmf, 0.25), 'montage')
+doubleHSV = im2double(HSV);
+doubleHSV(:,:,2) = Ihmf;
 HSV = im2uint8(doubleHSV);
-outI = you2rgb(doubleHSV, 'HSV');
+orI = you2rgb(HSV);
 
 figure(1),
-subplot(221), imshow(orI), title('Original image, RGB cs');
-subplot(222), imshow(orHSV), title('Original image, HSV cs');
-%subplot(222), imshow(Ihmf), title('Homomorfic filter on HSV S channel');
-subplot(223), imshow(HSV), title('HSV original image with filtered S channel');
-subplot(224), imshow(outI), title('Filtered original image');
+subplot(221), imshow(I), title('Original image');
+subplot(222), imshow(Ihmf), title('Homomorfic filter on HSV S channel');
+subplot(223), imshow(HSV), title('Original image with filtered S channel');
+subplot(224), imshow(I), title('Filtered original image');
 

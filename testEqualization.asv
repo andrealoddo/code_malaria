@@ -1,0 +1,23 @@
+PathNameRoot = 'C:\Users\Andre\Google Drive\PhD\Work\Datasets\PLASMODIUM_IDB\2_PlasmodiumDataset\Malariae\1401063467';
+
+[FileName,PathName,FilterIndex] = uigetfile([PathNameRoot, '*.tif']);
+
+width = 400;
+
+
+I = imread ([PathName, FileName]);
+figure; imshow(I);
+
+Ref = imcrop(I, [size(I,1)/2, 0, width-1, size(I,2)]);
+
+I_left = I(1:end, 1:width, :);
+I3 = imhistmatch(I_left, Ref);
+
+I_right = I(end-width, end, :);
+I4 = imhistmatch(I_right, Ref);
+
+I(1:end, 1:width, :) = I3;
+
+
+figure; imshow(I);
+
